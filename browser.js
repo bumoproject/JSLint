@@ -119,13 +119,9 @@ ADSAFE.lib("browser_ui", function () {
 // Call JSLint with the source text, the options, and the predefined globals.
 
             var global_string = global.getValue();
-            var result = jslint(
-                source.getValue(),
-                option,
-                (global_string === "")
-                    ? undefined
-                    : global_string.split(rx_separator)
-            );
+			var js_value = source.getValue();
+			var pre_defined = (global_string === "") ? undefined : global_string.split(rx_separator);
+            var result = jslint(js_value,option, pre_defined);
 
 // Generate the reports.
 

@@ -1,5 +1,5 @@
 // jslint.js
-// 2018-01-26
+// 2018-01-04
 // Copyright (c) 2015 Douglas Crockford  (www.JSLint.com)
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -101,18 +101,18 @@
     expected_string_a, expected_type_string_a, exports, expression, extra,
     finally, flag, for, forEach, free, from, froms, fud, fudge, function,
     function_in_loop, functions, g, getset, global, i, id, identifier, import,
-    inc, indexOf, infix_in, init, initial, isArray, isFinite, isNaN, join,
-    json, keys, label, label_a, lbp, led, length, level, line, lines, live,
-    loop, m, margin, match, maxerr, maxlen, message, misplaced_a,
-    misplaced_directive_a, missing_browser, missing_m, module, multivar,
-    naked_block, name, names, nested_comment, new, node, not_label_a, nr, nud,
-    number_isNaN, ok, open, option, out_of_scope_a, parameters, pop, property,
-    push, qmark, quote, redefinition_a_b, replace, required_a_optional_b,
-    reserved_a, right, role, search, signature, single, slice, some, sort,
-    split, statement, stop, strict, subscript_a, switch, test, this, thru,
-    toString, todo_comment, tokens, too_long, too_many, too_many_digits, tree,
-    try, type, u, unclosed_comment, unclosed_mega, unclosed_string,
-    undeclared_a, unexpected_a, unexpected_a_after_b, unexpected_a_before_b,
+    inc, indexOf, infix_in, init, initial, isArray, isFinite, join, json, keys,
+    label, label_a, lbp, led, length, level, line, lines, live, loop, m,
+    margin, match, maxerr, maxlen, message, misplaced_a, misplaced_directive_a,
+    missing_browser, missing_m, module, multivar, naked_block, name, names,
+    nested_comment, new, node, not_label_a, nr, nud, number_isNaN, ok, open,
+    option, out_of_scope_a, parameters, pop, property, push, qmark, quote,
+    redefinition_a_b, replace, required_a_optional_b, reserved_a, right, role,
+    search, signature, single, slice, some, sort, split, statement, stop,
+    strict, subscript_a, switch, test, this, thru, toString, todo_comment,
+    tokens, too_long, too_many, too_many_digits, tree, try, type, u,
+    unclosed_comment, unclosed_mega, unclosed_string, undeclared_a,
+    unexpected_a, unexpected_a_after_b, unexpected_a_before_b,
     unexpected_at_top_level_a, unexpected_char_a, unexpected_comment,
     unexpected_directive_a, unexpected_expression_a, unexpected_label_a,
     unexpected_parens, unexpected_space_a_b, unexpected_statement_a,
@@ -279,21 +279,30 @@ const jslint = (function JSLint() {
         ">": true,
         ">=": true
     };
+	
+//do not use these key. 2018-01-22
+//"Array", "ArrayBuffer", "Float32Array", "Float64Array", "Int8Array", "Int16Array",
+// "Int32Array", "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array", "Date"
+
+//do not use these key. 2018-01-23
+//"DataView", "decodeURI", "decodeURIComponent", "encodeURI", "encodeURIComponent", 
+// "Generator", "GeneratorFunction", "Intl", "Promise", "Proxy", "Reflect", "System", 
+//"URIError", "WeakMap", "WeakSet"
 
     const standard = [
-
 // These are the globals that are provided by the language standard.
 
-        "Array", "ArrayBuffer", "Boolean", "DataView", "Date", "decodeURI",
-        "decodeURIComponent", "encodeURI", "encodeURIComponent", "Error",
-        "EvalError", "Float32Array", "Float64Array", "Generator",
-        "GeneratorFunction", "Int8Array", "Int16Array", "Int32Array", "Intl",
+        "Boolean", 
+        "Error",
+        "EvalError",
         "JSON", "Map", "Math", "Number", "Object", "parseInt", "parseFloat",
-        "Promise", "Proxy", "RangeError", "ReferenceError", "Reflect", "RegExp",
-        "Set", "String", "Symbol", "SyntaxError", "System", "TypeError",
-        "Uint8Array", "Uint8ClampedArray", "Uint16Array", "Uint32Array",
-        "URIError", "WeakMap", "WeakSet"
+        "RangeError", "ReferenceError", "RegExp",
+        "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
+	
+    const useable_standard = ["print", "log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "internal_check_time", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "doTransaction", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "payCoinAmount", "payAssetAmount", "blockTimestamp", "blockNumber"];
+	
+    const do_not_use_internal_func = ["internal_check_time", "internal_hello_test"];
 
     const bundle = {
 
@@ -375,7 +384,7 @@ const jslint = (function JSLint() {
         unused_a: "Unused '{a}'.",
         use_double: "Use double quotes, not single quotes.",
         use_spaces: "Use spaces, not tabs.",
-        use_strict: "This function needs a \"use strict\" pragma.",
+        use_strict: "This function needs a \"use strict\"; pragma.",
         var_loop: "Don't declare variables in a loop.",
         var_switch: "Don't declare variables in a switch.",
         weird_condition_a: "Weird condition '{a}'.",
@@ -420,7 +429,7 @@ const jslint = (function JSLint() {
     const rx_directive = /^(jslint|property|global)\s+(.*)$/;
     const rx_directive_part = /^([a-zA-Z$_][a-zA-Z0-9$_]*)\s*(?::\s*(true|false|[0-9]+)\s*)?(?:,\s*)?(.*)$/;
 // token (sorry it is so long)
-    const rx_token = /^((\s+)|([a-zA-Z_$][a-zA-Z0-9_$]*)|[(){}\[\]?,:;'"~`]|=(?:==?|>)?|\.+|[*\/][*\/=]?|\+[=+]?|-[=\-]?|[\^%]=?|&[&=]?|\|[|=]?|>{1,3}=?|<<?=?|!(?:!|==?)?|(0|[1-9][0-9]*))(.*)$/;
+    const rx_token = /^((\s+)|([a-zA-Z_$][a-zA-Z0-9_$]*)|[(){}\[\]?,:;'"~`]|=(?:==?|>)?|\.+|[*\/][*\/=]?|\+(?:=|\++)?|-(?:=|-+)?|[\^%]=?|&[&=]?|\|[|=]?|>{1,3}=?|<<?=?|!(?:!|==?)?|(0|[1-9][0-9]*))(.*)$/;
     const rx_digits = /^([0-9]+)(.*)$/;
     const rx_hexs = /^([0-9a-fA-F]+)(.*)$/;
     const rx_octals = /^([0-7]+)(.*)$/;
@@ -2440,6 +2449,14 @@ const jslint = (function JSLint() {
         }
         return token;
     });
+    //internal name 2018-01-23
+    do_not_use_internal_func.forEach(function (name) {
+        constant(name, "function", function () {
+            warn("unexpected_a", token);
+            return token;
+        });
+    });
+		
     constant("false", "boolean", false);
     constant("Function", "function", function () {
         if (!option.eval) {
@@ -4923,6 +4940,7 @@ const jslint = (function JSLint() {
             token_nr = 0;
             var_mode = undefined;
             populate(declared_globals, standard, false);
+            populate(declared_globals, useable_standard, false);
             if (global_array !== undefined) {
                 populate(declared_globals, global_array, false);
             }
@@ -4967,11 +4985,9 @@ const jslint = (function JSLint() {
                 if (module_mode && global.strict !== undefined) {
                     warn("unexpected_a", global.strict);
                 }
-                if (warnings.length > 0) {
-                    uninitialized_and_unused();
-                    if (!option.white) {
-                        whitage();
-                    }
+                uninitialized_and_unused();
+                if (!option.white) {
+                    whitage();
                 }
             }
             if (!option.browser) {
@@ -4989,7 +5005,7 @@ const jslint = (function JSLint() {
         }
         return {
             directives: directives,
-            edition: "2018-01-26",
+            edition: "2018-01-04",
             exports: exports,
             froms: froms,
             functions: functions,
@@ -5010,3 +5026,16 @@ const jslint = (function JSLint() {
         };
     };
 }());
+
+
+//call js lint by user. 2018-01-19
+function callJslint(js_value, global_string) {
+	var option_array = Object.create(null);
+	option_array["single"] = true;
+	option_array["white"] = true;
+	var rx_separator = /[\s,;'"]+/;
+	var pre_defined = (global_string === "") ? undefined : global_string.split(rx_separator);
+	var data = jslint(js_value, option_array, pre_defined); 
+
+	return JSON.stringify(data.warnings);
+}
