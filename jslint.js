@@ -2940,7 +2940,10 @@ const jslint = (function JSLint() {
             the_function.arity === "statement"
             && next_token.line === token.line
         ) {
-            return stop("unexpected_a", next_token);
+            if(next_token.id != "function")
+            {
+               return stop("unexpected_a", next_token);
+            }
         }
         if (next_token.id === "." || next_token.id === "[") {
             warn("unexpected_a");
@@ -4497,7 +4500,7 @@ const jslint = (function JSLint() {
                             || name.function.arity !== "unary"
                         )
                     ) {
-                        warn("unused_a", name);
+                        //warn("unused_a", name);
                     } else if (!name.init) {
                         warn("uninitialized_a", name);
                     }
