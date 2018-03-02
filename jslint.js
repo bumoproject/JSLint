@@ -300,7 +300,7 @@ const jslint = (function JSLint() {
         "Set", "String", "Symbol", "SyntaxError", "TypeError"
     ];
 	
-    const useable_standard = ["print", "log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "internal_check_time", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "doTransaction", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "payCoinAmount", "payAssetAmount", "blockTimestamp", "blockNumber"];
+    const useable_standard = ["print", "log", "getBalance", "getAccountAsset", "storageLoad", "getBlockHash", "contractQuery", "getValidators", "internal_check_time", "int64Plus", "int64Sub", "int64Mul", "int64Mod", "int64Div", "int64Compare", "assert", "storageStore", "storageDel", "doTransaction", "configFee", "setValidators", "payCoin", "sender", "thisAddress", "main", "query", "init", "callJslint", "trigger", "triggerIndex", "consensusValue", "payCoinAmount", "payAssetAmount", "blockTimestamp", "blockNumber", "addressCheck", "tlog"];
 	
     const do_not_use_internal_func = ["internal_check_time", "internal_hello_test"];
 
